@@ -86,21 +86,21 @@ function handleSymbol(value) {
 
 function rerender() {
     // Main screen
-    mainScreen.innerText = buffer;
-    
-    let digitCount = mainScreen.innerText.length;
-    if (digitCount < 12)
+    mainScreen.innerText = Number(buffer).toLocaleString();
+
+    let charCount = mainScreen.innerText.length;
+    if (charCount < 12)
         mainScreen.style.fontSize = '60px';
-    else if (digitCount < 15)
+    else if (charCount < 15)
         mainScreen.style.fontSize = '48px';
-    else if (digitCount < 20)
+    else if (charCount < 20)
         mainScreen.style.fontSize = '36px';
     else
         mainScreen.style.fontSize = '24px';
 
     // Secondary screen
     if (runningTotal != 0)
-        secondaryScreen.innerText = `${runningTotal} ${lastOperator}`;
+        secondaryScreen.innerText = `${runningTotal.toLocaleString()} ${lastOperator}`;
     else
         secondaryScreen.innerHTML = "&nbsp;";
 
