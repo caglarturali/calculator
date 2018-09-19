@@ -1,7 +1,7 @@
 let runningTotal = 0;
 let buffer = "0";
-let lastOperator;
-let isLastOperationComplete = false;
+let lastOperator = null;
+let isSubTotalCalculated = false;
 const mainScreen = document.querySelector(".main-display");
 const secondaryScreen = document.querySelector(".secondary-display");
 
@@ -15,6 +15,13 @@ function buttonClick(value) {
 }
 
 function handleNumber(value) {
+    // Clear buffer if last operator was '='
+    // and not being followed by another operator.
+    if (isSubTotalCalculated) {
+        buffer = "0";
+        isSubTotalCalculated = false;
+    }
+
     if (buffer === "0") {
         buffer = value;
     } else {
@@ -40,20 +47,26 @@ function handleMath(value) {
 }
 
 function flushOperation(intBuffer) {
-    if (lastOperator === "+") {
-        runningTotal += intBuffer;
-    } else if (lastOperator === "-") {
-        runningTotal -= intBuffer;
-    } else if (lastOperator === "×") {
-        runningTotal *= intBuffer;
-    } else {
-        runningTotal /= intBuffer;
+    switch (lastOperator) {
+        case "+":
+            runningTotal += intBuffer;
+            break;
+        case "-":
+            runningTotal -= intBuffer;
+            break;
+        case "×":
+            runningTotal *= intBuffer;
+            break;
+        case "÷":
+            runningTotal /= intBuffer;
+            break;
     }
 }
 
 function handleSymbol(value) {
     switch (value) {
         case "C":
+            lastOperator = null;
             buffer = "0";
             runningTotal = 0;
             break;
@@ -64,9 +77,9 @@ function handleSymbol(value) {
             }
             flushOperation(parseInt(buffer));
             lastOperator = null;
-            buffer = runningTotal;
+            buffer = runningTotal.toString();
             runningTotal = 0;
-            isLastOperationComplete = true;
+            isSubTotalCalculated = true;
             break;
         case "←":
             if (buffer.length === 1) {
@@ -103,12 +116,6 @@ function rerender() {
         secondaryScreen.innerText = `${runningTotal.toLocaleString()} ${lastOperator}`;
     else
         secondaryScreen.innerHTML = "&nbsp;";
-
-    // Clear buffer after '='
-    if (isLastOperationComplete) {
-        buffer = "0";
-        isLastOperationComplete = false;
-    }
 }
 
 function init() {
